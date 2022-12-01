@@ -67,7 +67,7 @@ Find the top three Elves carrying the most Calories. How many Calories are those
 ```elixir
 snacks
 |> Enum.map(&Enum.sum/1)
-|> Enum.sort(&(&1 >= &2))
+|> Enum.sort(:desc)
 |> Enum.take(3)
 |> Enum.sum()
 ```
