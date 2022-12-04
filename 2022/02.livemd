@@ -34,7 +34,7 @@ What would your total score be if everything goes exactly according to your stra
 
 ```elixir
 games =
-  File.read!("workspace/advent-of-code/2022/02.input")
+  File.read!("workspaces/advent-of-code/2022/inputs/02.txt")
   |> String.split("\n", trim: true)
   |> Enum.map(&String.split(&1, " ", trim: true))
 ```
