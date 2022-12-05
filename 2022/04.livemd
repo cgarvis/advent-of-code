@@ -52,14 +52,17 @@ __In how many assignment pairs does one range fully contain the other?__
 assignments =
   File.read!("workspaces/advent-of-code/2022/inputs/04.txt")
   |> String.split("\n", trim: true)
+```
 
+```elixir
 assignments
 |> Enum.count(fn line ->
-  [a, b] = String.split(line, ",") |> Enum.map(&String.split(&1, "-"))
-  [a1, a2] = Enum.map(a, &String.to_integer/1)
-  [b1, b2] = Enum.map(b, &String.to_integer/1)
+  [a1, a2, b1, b2] = String.split(line, [",", "-"]) |> Enum.map(&String.to_integer/1)
 
-  (a1 <= b1 && b2 <= a2) || (b1 <= a1 && a2 <= b2)
+  range_a = MapSet.new(a1..a2)
+  range_b = MapSet.new(b1..b2)
+
+  MapSet.subset?(range_a, range_b) or MapSet.subset?(range_b, range_a)
 end)
 ```
 
@@ -80,13 +83,11 @@ __In how many assignment pairs do the ranges overlap?__
 ```elixir
 assignments
 |> Enum.count(fn line ->
-  [a, b] = String.split(line, ",") |> Enum.map(&String.split(&1, "-"))
-  [a1, a2] = Enum.map(a, &String.to_integer/1)
-  [b1, b2] = Enum.map(b, &String.to_integer/1)
+  [a1, a2, b1, b2] = String.split(line, [",", "-"]) |> Enum.map(&String.to_integer/1)
 
-  (a1 <= b1 and b1 <= a2) ||
-    (a1 <= b2 and b2 <= a2) ||
-    (b1 <= a1 and a1 <= b2) ||
-    (b1 <= a2 and a2 <= b2)
+  range_a = MapSet.new(a1..a2)
+  range_b = MapSet.new(b1..b2)
+
+  !MapSet.disjoint?(range_a, range_b)
 end)
 ```
