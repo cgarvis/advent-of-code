@@ -37,8 +37,8 @@ Find the item type that appears in both compartments of each rucksack. What is t
 
 ```elixir
 defmodule Priorization do
-  def score(<<lower::utf8>>) when lower in ?a..?z, do: lower - ?a + 1
-  def score(<<upper::utf8>>) when upper in ?A..?Z, do: upper - ?A + 27
+  def score(c) when c in ?a..?z, do: c - ?a + 1
+  def score(c) when c in ?A..?Z, do: c - ?A + 27
 end
 
 rucksacks =
@@ -46,14 +46,12 @@ rucksacks =
   |> String.split("\n", trim: true)
 
 rucksacks
-|> Enum.map(fn s -> String.split_at(s, div(String.length(s), 2)) end)
+|> Enum.map(fn s -> s |> String.split_at(s |> String.length() |> div(2)) end)
 |> Enum.map(fn {left, right} ->
-  left = Enum.frequencies(String.split(left, "", trim: true))
-  right = Enum.frequencies(String.split(right, "", trim: true))
+  left = :binary.bin_to_list(left)
+  right = :binary.bin_to_list(right)
 
-  {c, _} = Enum.find(left, fn {x, _} -> Map.get(right, x) end)
-
-  Priorization.score(c)
+  left |> Enum.find(fn char -> char in right end) |> Priorization.score()
 end)
 |> Enum.sum()
 ```
@@ -94,12 +92,11 @@ Find the item type that corresponds to the badges of each three-Elf group. What 
 rucksacks
 |> Enum.chunk_every(3)
 |> Enum.map(fn [first, second, third] ->
-  first = Enum.frequencies(String.split(first, "", trim: true))
-  second = Enum.frequencies(String.split(second, "", trim: true))
-  third = Enum.frequencies(String.split(third, "", trim: true))
+  first = :binary.bin_to_list(first)
+  second = :binary.bin_to_list(second)
+  third = :binary.bin_to_list(third)
 
-  {c, _} = Enum.find(first, fn {x, _} -> Map.get(second, x) && Map.get(third, x) end)
-  Priorization.score(c)
+  first |> Enum.find(fn char -> char in second and char in third end) |> Priorization.score()
 end)
 |> Enum.sum()
 ```
